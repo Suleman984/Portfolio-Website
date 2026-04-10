@@ -139,7 +139,7 @@ export default function GSAPInit() {
       function splitChars(wordEl: Element) {
         const text = wordEl.textContent || '';
         wordEl.innerHTML = '';
-        [...text].forEach(ch => {
+        Array.from(text).forEach(ch => {
           if (ch===' '||ch==='\u00a0') { wordEl.appendChild(document.createTextNode('\u00a0')); return; }
           const s = document.createElement('span');
           s.className='char-hover'; s.dataset.char=ch; s.textContent=ch;
@@ -167,13 +167,17 @@ export default function GSAPInit() {
         // Badge float
         gsap.to('#heroBadge', { y:-18, rotation:5, duration:3, ease:'sine.inOut', yoyo:true, repeat:-1 });
 
-        // Hero parallax on scroll
-        gsap.to('.hero-title', { y:-120, scale:.92, opacity:.2, ease:'none',
-          scrollTrigger:{ trigger:'#hero', start:'top top', end:'bottom top', scrub:1.2 } });
-        gsap.to('.hero-sub, .hero-roles, .hero-actions, .hero-scroll', { y:-60, opacity:0, ease:'none',
-          scrollTrigger:{ trigger:'#hero', start:'20% top', end:'bottom top', scrub:1 } });
+        // Hero parallax on scroll (sub/roles/buttons/scroll hint stay visible — no opacity scrub)
+        gsap.to('.hero-title', { y:-80, scale:.97, opacity:1, ease:'none',
+          scrollTrigger:{ trigger:'#hero', start:'top top', end:'bottom top', scrub:1.2, invalidateOnRefresh:true } });
         gsap.to('.hero-noise', { y:-100, ease:'none',
-          scrollTrigger:{ trigger:'#hero', start:'top top', end:'bottom top', scrub:true } });
+          scrollTrigger:{ trigger:'#hero', start:'top top', end:'bottom top', scrub:true, invalidateOnRefresh:true } });
+
+        let resizeDebounce: ReturnType<typeof setTimeout> | undefined;
+        window.addEventListener('resize', () => {
+          clearTimeout(resizeDebounce);
+          resizeDebounce = setTimeout(() => ScrollTrigger.refresh(), 150);
+        });
 
         // Floating shapes
         const hero = document.getElementById('hero');
@@ -398,7 +402,7 @@ export default function GSAPInit() {
 
         // Progress ring
         const ring=document.getElementById('progress-ring');
-        const ringCircle=document.getElementById('ringCircle') as SVGCircleElement;
+        const ringCircle=document.getElementById('ringCircle') as unknown as SVGCircleElement | null;
         const circumference=2*Math.PI*22;
         if(ringCircle){ ringCircle.style.strokeDasharray=String(circumference); ringCircle.style.strokeDashoffset=String(circumference); }
         window.addEventListener('scroll',()=>{
