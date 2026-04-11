@@ -7,8 +7,9 @@ export default function Contact() {
       <div className="sec-tag contact-eyebrow reveal-up" style={{ justifyContent: 'center' }}>Get In Touch</div>
 
       <h2 className="contact-title reveal-up">
-        Let&apos;s build<br />
-        <span className="grad-text">something<br />great</span>
+        <span className="contact-title-line">Let&apos;s build</span>
+        <span className="contact-title-line grad-text">something</span>
+        <span className="contact-title-line grad-text">great</span>
       </h2>
 
       <p className="contact-sub reveal-up">

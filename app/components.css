@@ -187,6 +187,7 @@ nav.scrolled { background: rgba(5,5,10,.75); backdrop-filter: blur(30px); border
 
 /* ── CONTACT ── */
 .contact-title { font-family: 'Syne', sans-serif; font-size: clamp(3rem,7vw,7rem); font-weight: 800; letter-spacing: -.05em; line-height: .9; margin-bottom: 2rem; }
+.contact-title-line { display: block; }
 .contact-sub { color: var(--muted2); font-size: 1.05rem; max-width: 520px; margin: 0 auto 4rem; line-height: 1.85; font-weight: 300; }
 .contact-cards { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; margin-bottom: 3rem; }
 .ccard { display: flex; align-items: center; gap: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 14px 24px; text-decoration: none; color: var(--text); font-size: .9rem; font-weight: 500; transition: all .3s; position: relative; overflow: hidden; cursor: none; }

@@ -273,25 +273,6 @@ export default function GSAPInit() {
           .fromTo('.contact-sub',     { opacity:0, y:30 }, { opacity:1, y:0, duration:.7, ease:'power3.out' }, '-=.5')
           .fromTo('.ccard',           { opacity:0, y:40, scale:.9 }, { opacity:1, y:0, scale:1, duration:.5, stagger:.08, ease:'back.out(1.5)' }, '-=.4');
 
-        // Contact scramble
-        const contactTitle = document.querySelector('.contact-title');
-        const CHARS='!@#$%&ABCDEFGHIJKLMNOPQabcdefghijklmnopqrstuvwxyz0123456789';
-        ScrollTrigger.create({ trigger:'#contact', start:'top 75%', once:true,
-          onEnter:()=>{
-            const orig=contactTitle?.textContent||'';
-            let frame=0; const len=orig.length;
-            const id=setInterval(()=>{
-              let out='';
-              for(let i=0;i<len;i++){
-                if(frame>i*1.8||orig[i]===' '||orig[i]==='\n') out+=orig[i];
-                else out+=CHARS[Math.floor(Math.random()*CHARS.length)];
-              }
-              if (contactTitle) contactTitle.textContent=out;
-              if(++frame>len*2.2) clearInterval(id);
-            },40);
-          }
-        });
-
         // Stat cards flip-in
         gsap.utils.toArray('.stat-card').forEach((card: any, i: number) => {
           gsap.fromTo(card, { opacity:0, y:60, rotateX:30 },
