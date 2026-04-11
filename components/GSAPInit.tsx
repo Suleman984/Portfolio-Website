@@ -44,7 +44,7 @@ export default function GSAPInit() {
         const geo = new THREE.BufferGeometry();
         const pos = new Float32Array(count * 3);
         const col = new Float32Array(count * 3);
-        const colors = [[.486,.427,.98],[.973,.522,.651],[.165,.957,.596],[.969,.651,.169]];
+        const colors = [[0,.72,.55],[0,.55,.48],[.12,.85,.65],[0,.45,.42]];
         for (let i = 0; i < count; i++) {
           pos[i*3]=(Math.random()-.5)*200; pos[i*3+1]=(Math.random()-.5)*200; pos[i*3+2]=(Math.random()-.5)*100;
           const c = colors[Math.floor(Math.random()*colors.length)] as number[];
@@ -299,9 +299,9 @@ export default function GSAPInit() {
 
         // Section bg shifts
         const sectionColors: Record<string, string> = {
-          '#hero':'#05050a','#stats':'#0f0f1a','#about':'#05050a',
-          '#skills':'#0a0a12','#services':'#05050a','#experience':'#05050a',
-          '#projects':'#0a0a12','#achievements':'#05050a','#contact':'#0a0a12',
+          '#hero':'#030504','#stats':'#0a100c','#about':'#030504',
+          '#skills':'#060a08','#services':'#030504','#experience':'#030504',
+          '#projects':'#060a08','#achievements':'#030504','#contact':'#060a08',
         };
         Object.entries(sectionColors).forEach(([id,color])=>{
           ScrollTrigger.create({ trigger:id, start:'top center', end:'bottom center',
@@ -323,7 +323,7 @@ export default function GSAPInit() {
           card.addEventListener('mouseenter',(e: MouseEvent)=>{
             const r=card.getBoundingClientRect();
             const ripple=document.createElement('div');
-            ripple.style.cssText=`position:absolute;left:${e.clientX-r.left}px;top:${e.clientY-r.top}px;width:10px;height:10px;border-radius:50%;background:rgba(124,109,250,.25);transform:translate(-50%,-50%);pointer-events:none;z-index:2`;
+            ripple.style.cssText=`position:absolute;left:${e.clientX-r.left}px;top:${e.clientY-r.top}px;width:10px;height:10px;border-radius:2px;background:rgba(0,184,140,.2);transform:translate(-50%,-50%);pointer-events:none;z-index:2`;
             card.style.position='relative';
             card.appendChild(ripple);
             gsap.to(ripple,{scale:30,opacity:0,duration:.8,ease:'power2.out',onComplete:()=>ripple.remove()});
@@ -369,18 +369,6 @@ export default function GSAPInit() {
         ScrollTrigger.create({ trigger:'#skills', start:'top 75%', once:true,
           onEnter:()=>gsap.fromTo('#panel-frontend .sk-chip',{opacity:0,y:25,scale:.85},{opacity:1,y:0,scale:1,duration:.45,stagger:.06,ease:'back.out(1.8)'}) });
 
-        // Mobile nav
-        const hamBtn=document.getElementById('hamBtn');
-        const mobileMenu=document.getElementById('mobileMenu');
-        hamBtn?.addEventListener('click',()=>{
-          hamBtn.classList.toggle('open');
-          const opening=mobileMenu?.classList.toggle('open');
-          if(opening) gsap.fromTo(mobileMenu!.querySelectorAll('a'),{opacity:0,y:40,skewY:5},{opacity:1,y:0,skewY:0,stagger:.09,duration:.55,ease:'power3.out',delay:.1});
-        });
-        document.querySelectorAll('.mob-link').forEach((link: any)=>{
-          link.addEventListener('click',()=>{hamBtn?.classList.remove('open');mobileMenu?.classList.remove('open');});
-        });
-
         // Progress ring
         const ring=document.getElementById('progress-ring');
         const ringCircle=document.getElementById('ringCircle') as unknown as SVGCircleElement | null;
@@ -396,13 +384,13 @@ export default function GSAPInit() {
         window.addEventListener('scroll',()=>document.getElementById('nav')?.classList.toggle('scrolled',scrollY>60));
 
         // Sparkle on click
-        const SCOLS=['#7c6dfa','#f857a6','#2af598','#ffa62b','#00c6ff','#fff'];
+        const SCOLS=['#00b88c','#00a078','#4dd4a8','#dce8e2'];
         document.addEventListener('click',e=>{
           const count=10+Math.floor(Math.random()*8);
           for(let i=0;i<count;i++){
             const dot=document.createElement('div');
             const size=4+Math.random()*6, color=SCOLS[Math.floor(Math.random()*SCOLS.length)];
-            dot.style.cssText=`left:${e.clientX}px;top:${e.clientY}px;width:${size}px;height:${size}px;background:${color};position:fixed;border-radius:50%;pointer-events:none;z-index:9999;mix-blend-mode:screen`;
+            dot.style.cssText=`left:${e.clientX}px;top:${e.clientY}px;width:${size}px;height:${size}px;background:${color};position:fixed;border-radius:1px;pointer-events:none;z-index:9999;opacity:.85`;
             document.body.appendChild(dot);
             const angle=Math.random()*Math.PI*2, dist=50+Math.random()*80;
             gsap.to(dot,{x:Math.cos(angle)*dist,y:Math.sin(angle)*dist,opacity:0,scale:0,duration:.6+Math.random()*.4,ease:'power2.out',onComplete:()=>dot.remove()});

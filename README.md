@@ -72,7 +72,7 @@ export const PERSONAL = {
   name: 'Muhammad Suleman',
   email: 'sulemanefc@gmail.com',
   phone: '+92-336-058-9167',
-  linkedin: 'https://linkedin.com/in/YOUR_PROFILE',
+  linkedin: 'https://linkedin.com/in/muhammad-suleman-55bb8020a',
   github: 'https://github.com/YOUR_USERNAME',
   // ...
 };

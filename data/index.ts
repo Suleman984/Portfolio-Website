@@ -35,7 +35,7 @@ export const PERSONAL = {
   email: 'sulemanefc@gmail.com',
   phone: '+92-336-058-9167',
   location: 'Islamabad, Pakistan',
-  linkedin: 'https://linkedin.com/in/muhammad-suleman',
+  linkedin: 'https://linkedin.com/in/muhammad-suleman-55bb8020a',
   github: 'https://github.com',
   gpa: '3.1 / 4.0',
   university: 'Institute of Space and Technology',

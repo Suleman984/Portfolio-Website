@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Loader from '@/components/Loader';
 import Cursor from '@/components/Cursor';
 import ThreeBackground from '@/components/ThreeBackground';
@@ -22,6 +23,8 @@ import MobileMenu from '@/components/MobileMenu';
 import GSAPInit from '@/components/GSAPInit';
 
 export default function Home() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   return (
     <>
       <Loader />
@@ -29,8 +32,8 @@ export default function Home() {
       <ThreeBackground />
       <GSAPInit />
 
-      <Navbar />
-      <MobileMenu />
+      <Navbar menuOpen={mobileMenuOpen} onMenuToggle={() => setMobileMenuOpen((o) => !o)} />
+      <MobileMenu open={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
       <ProgressRing />
 
       <main>

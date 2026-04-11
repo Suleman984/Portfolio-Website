@@ -42,7 +42,7 @@ export default function Hero() {
         <div className="badge-ring">
           <svg viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path id="circle-path" d="M80,80 m-65,0 a65,65 0 1,1 130,0 a65,65 0 1,1 -130,0" fill="none"/>
-            <text fill="rgba(124,109,250,.6)" fontFamily="Syne" fontSize="11" fontWeight="700" letterSpacing="6">
+            <text className="badge-svg-text" fontFamily="JetBrains Mono" fontSize="10" fontWeight="600" letterSpacing="4">
               <textPath href="#circle-path">FULL STACK DEVELOPER • ISLAMABAD • </textPath>
             </text>
           </svg>
