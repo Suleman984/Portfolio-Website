@@ -36,7 +36,7 @@ export const PERSONAL = {
   phone: '+92-336-058-9167',
   location: 'Islamabad, Pakistan',
   linkedin: 'https://linkedin.com/in/muhammad-suleman-55bb8020a',
-  github: 'https://github.com',
+  github: 'https://github.com/Suleman984',
   gpa: '3.1 / 4.0',
   university: 'Institute of Space and Technology',
   degree: 'BS Computer Science',
