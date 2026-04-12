@@ -108,6 +108,7 @@ export const PROJECTS: Project[] = [
     ],
     liveUrl: '#',
     githubUrl: '#',
+    
   },
   {
     id: 4,
@@ -126,7 +127,7 @@ export const PROJECTS: Project[] = [
       'Handles paginated LinkedIn results and bulk multi-profile extraction',
     ],
     liveUrl: '#',
-    githubUrl: '#',
+    githubUrl: 'https://github.com/Suleman984/Link2Leads',
   },
   {
     id: 5,
@@ -145,7 +146,7 @@ export const PROJECTS: Project[] = [
       'Zero dependency on LLMs — all matching logic is deterministic and auditable',
     ],
     liveUrl: '#',
-    githubUrl: '#',
+    githubUrl: '',
   },
   {
     id: 6,
