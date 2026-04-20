@@ -169,7 +169,7 @@ export default function GSAPInit() {
 
         // Hero parallax on scroll (sub/roles/buttons/scroll hint stay visible — no opacity scrub)
         gsap.to('.hero-title', { y:-80, scale:.97, opacity:1, ease:'none',
-          scrollTrigger:{ trigger:'#hero', start:'top top', end:'bottom top', scrub:1.2, invalidateOnRefresh:true } });
+          scrollTrigger:{ trigger:'#hero', start:'top top', end:'bottom top', scrub:true, invalidateOnRefresh:true } });
         gsap.to('.hero-noise', { y:-100, ease:'none',
           scrollTrigger:{ trigger:'#hero', start:'top top', end:'bottom top', scrub:true, invalidateOnRefresh:true } });
 
@@ -200,7 +200,7 @@ export default function GSAPInit() {
             delay:(i%3)*.12
           });
           gsap.to(card, { y:i%2===0?-20:20, ease:'none',
-            scrollTrigger:{ trigger:card, start:'top bottom', end:'bottom top', scrub:1.5 } });
+            scrollTrigger:{ trigger:card, start:'top bottom', end:'bottom top', scrub:true } });
         });
 
         // Exp cards
@@ -282,7 +282,7 @@ export default function GSAPInit() {
 
         // Skills parallax
         gsap.to('.skills-flex', { y:-30, ease:'none',
-          scrollTrigger:{ trigger:'#skills', start:'top bottom', end:'bottom top', scrub:1.5 } });
+          scrollTrigger:{ trigger:'#skills', start:'top bottom', end:'bottom top', scrub:true } });
 
         // Footer
         gsap.fromTo('footer', { opacity:0, y:40 },
@@ -374,14 +374,13 @@ export default function GSAPInit() {
         const ringCircle=document.getElementById('ringCircle') as unknown as SVGCircleElement | null;
         const circumference=2*Math.PI*22;
         if(ringCircle){ ringCircle.style.strokeDasharray=String(circumference); ringCircle.style.strokeDashoffset=String(circumference); }
-        window.addEventListener('scroll',()=>{
+        const onWinScroll = () => {
           const scrolled=scrollY/(document.documentElement.scrollHeight-innerHeight);
           if(ringCircle) ringCircle.style.strokeDashoffset=String(circumference*(1-scrolled));
           ring?.classList.toggle('visible',scrollY>300);
-        });
-
-        // Nav scroll
-        window.addEventListener('scroll',()=>document.getElementById('nav')?.classList.toggle('scrolled',scrollY>60));
+          document.getElementById('nav')?.classList.toggle('scrolled',scrollY>60);
+        };
+        window.addEventListener('scroll', onWinScroll, { passive: true });
 
         // Sparkle on click
         const SCOLS=['#00b88c','#00a078','#4dd4a8','#dce8e2'];

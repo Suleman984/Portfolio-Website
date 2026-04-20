@@ -27,7 +27,8 @@
   --accent-rgb: 0, 184, 140;
 }
 
-html { overflow-x: hidden; scroll-behavior: smooth; }
+/* Avoid overflow-x on html — on WebKit/Safari it can break or “stack” vertical scrolling.
+   Clip horizontal overflow on body only. */
 
 body {
   background: var(--black);
@@ -35,8 +36,11 @@ body {
   font-family: var(--font-body);
   font-size: 16px;
   line-height: 1.6;
-  overflow-x: hidden;
+  overflow-x: clip;
   cursor: none;
+}
+@supports not (overflow: clip) {
+  body { overflow-x: hidden; }
 }
 
 a { text-decoration: none; color: inherit; }
@@ -105,7 +109,8 @@ section { padding: 9rem 6vw; position: relative; z-index: 2; }
 .btn-secondary:hover { border-color: rgba(var(--accent-rgb), .45); background: rgba(var(--accent-rgb), .06); color: var(--text); transform: translateY(-1px); }
 
 /* ── LOADER ── */
-#loader { position: fixed; inset: 0; z-index: 10000; background: var(--black); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 1.5rem; }
+/* Let wheel/trackpad reach the document — a full-screen fixed layer otherwise steals the scroll target. */
+#loader { position: fixed; inset: 0; z-index: 10000; background: var(--black); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 1.5rem; pointer-events: none; }
 .loader-logo { font-family: var(--font-mono); font-size: 1.65rem; font-weight: 600; color: var(--v1); letter-spacing: .04em; }
 .loader-bar-track { width: 200px; height: 1px; background: rgba(255,255,255,.08); position: relative; overflow: hidden; }
 .loader-bar { height: 100%; width: 0%; background: var(--v1); transition: width .05s linear; }
