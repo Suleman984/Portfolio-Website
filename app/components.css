@@ -157,7 +157,7 @@ nav.scrolled { background: rgba(3,8,6,.88); backdrop-filter: blur(20px); border-
 .pcard::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: var(--v1); transform: scaleX(0); transform-origin: left; transition: transform .5s cubic-bezier(.23,1,.32,1); z-index: 5; }
 .pcard:hover::before { transform: scaleX(1); }
 .pcard-img { width: 100%; flex: 1; overflow: hidden; position: relative; background: linear-gradient(135deg,#0a100c,#101816); min-height: 0; }
-.pcard-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .7s cubic-bezier(.23,1,.32,1),filter .4s; filter: saturate(.65) brightness(.7); }
+.pcard-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .7s cubic-bezier(.23,1,.32,1),filter .4s; filter: saturate(.65) brightness(.7); }
 .pcard:hover .pcard-img img { transform: scale(1.12); filter: saturate(1) brightness(.88); }
 .pcard-img-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom,rgba(8,12,10,.2) 0%,rgba(5,8,6,.92) 100%); }
 .pcard-num { position: absolute; bottom: .75rem; left: 1.25rem; font-family: var(--font-mono); font-size: 4.5rem; font-weight: 800; color: rgba(255,255,255,.04); line-height: 1; pointer-events: none; }
