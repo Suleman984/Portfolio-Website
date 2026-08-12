@@ -1,29 +1,31 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Loader from '@/components/Loader';
-import Cursor from '@/components/Cursor';
-import ThreeBackground from '@/components/ThreeBackground';
-import Navbar from '@/components/Navbar';
-import Hero from '@/components/Hero';
-import Ticker from '@/components/Ticker';
-import Stats from '@/components/Stats';
-import About from '@/components/About';
-import Marquee from '@/components/Marquee';
-import Skills from '@/components/Skills';
-import Services from '@/components/Services';
-import Experience from '@/components/Experience';
-import Projects from '@/components/Projects';
-import Achievements from '@/components/Achievements';
+import { useCallback, useEffect, useState } from 'react';
+import Background from '@/components/Background';
 import Contact from '@/components/Contact';
+import Cursor from '@/components/Cursor';
 import Footer from '@/components/Footer';
-import ProjectModal from '@/components/ProjectModal';
-import ProgressRing from '@/components/ProgressRing';
+import Hero from '@/components/Hero';
+import Journey from '@/components/Journey';
+import Loader from '@/components/Loader';
+import Manifesto from '@/components/Manifesto';
 import MobileMenu from '@/components/MobileMenu';
-import GSAPInit from '@/components/GSAPInit';
+import { MotionProvider } from '@/components/motion';
+import Navbar from '@/components/Navbar';
+import Profile from '@/components/Profile';
+import ProjectModal from '@/components/ProjectModal';
+import ScrollProgress from '@/components/ScrollProgress';
+import Stack from '@/components/Stack';
+import Work from '@/components/Work';
+import { PROJECTS, type Project } from '@/data';
 
 export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [openProject, setOpenProject] = useState<Project | null>(null);
+
+  const openProjectById = useCallback((id: number) => {
+    setOpenProject(PROJECTS.find((p) => p.id === id) ?? null);
+  }, []);
 
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
@@ -31,7 +33,7 @@ export default function Home() {
       const t = e.target;
       if (!(t instanceof Element)) return;
       const a = t.closest('a[href^="#"]');
-      if (!a || !(a instanceof HTMLAnchorElement)) return;
+      if (!(a instanceof HTMLAnchorElement)) return;
       const href = a.getAttribute('href');
       if (!href || href === '#') return;
       const target = document.querySelector(href);
@@ -46,32 +48,27 @@ export default function Home() {
   }, []);
 
   return (
-    <>
+    <MotionProvider>
       <Loader />
       <Cursor />
-      <ThreeBackground />
-      <GSAPInit />
+      <Background />
+      <ScrollProgress />
 
       <Navbar menuOpen={mobileMenuOpen} onMenuToggle={() => setMobileMenuOpen((o) => !o)} />
       <MobileMenu open={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
-      <ProgressRing />
 
       <main>
         <Hero />
-        <Ticker />
-        <Stats />
-        <About />
-        <Marquee />
-        <Skills />
-        <Services />
-        <Experience />
-        <Projects />
-        <Achievements />
+        <Manifesto />
+        <Work onOpen={openProjectById} />
+        <Stack />
+        <Journey />
+        <Profile />
         <Contact />
       </main>
 
       <Footer />
-      <ProjectModal />
-    </>
+      <ProjectModal project={openProject} onClose={() => setOpenProject(null)} />
+    </MotionProvider>
   );
 }

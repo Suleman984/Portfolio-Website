@@ -1,54 +1,151 @@
 'use client';
+
+import { useScroll, useTransform } from 'motion/react';
+import { useEffect, useRef, useState } from 'react';
+import { PERSONAL } from '@/data';
+import { EASE_OUT, m } from './motion';
+
+const START = 1.05;
+
+function useTypedRole(roles: string[]) {
+  const [text, setText] = useState('');
+
+  useEffect(() => {
+    let roleIdx = 0;
+    let charIdx = 0;
+    let deleting = false;
+    let timer: ReturnType<typeof setTimeout>;
+
+    const tick = () => {
+      const current = roles[roleIdx];
+      charIdx += deleting ? -1 : 1;
+      setText(current.slice(0, charIdx));
+
+      if (!deleting && charIdx === current.length) {
+        deleting = true;
+        timer = setTimeout(tick, 1900);
+      } else if (deleting && charIdx === 0) {
+        deleting = false;
+        roleIdx = (roleIdx + 1) % roles.length;
+        timer = setTimeout(tick, 320);
+      } else {
+        timer = setTimeout(tick, deleting ? 38 : 72);
+      }
+    };
+
+    timer = setTimeout(tick, START * 1000 + 900);
+    return () => clearTimeout(timer);
+  }, [roles]);
+
+  return text;
+}
+
 export default function Hero() {
+  const ref = useRef<HTMLElement>(null);
+  const role = useTypedRole(PERSONAL.roles);
+
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
+
+  /* The whole hero recedes into the floor as you leave it. */
+  const coreY = useTransform(scrollYProgress, [0, 1], [0, -140]);
+  const coreScale = useTransform(scrollYProgress, [0, 1], [1, 1.16]);
+  const coreOpacity = useTransform(scrollYProgress, [0, 0.65], [1, 0]);
+  const floorRotate = useTransform(scrollYProgress, [0, 1], [70, 84]);
+  const floorY = useTransform(scrollYProgress, [0, 1], ['0%', '-38%']);
+  const floorOpacity = useTransform(scrollYProgress, [0, 0.9], [1, 0.15]);
+
   return (
-    <section id="hero">
-      <div className="hero-noise" />
-      <div className="hero-inner">
-        <div className="hero-eyebrow">
-          <div className="eyebrow-dot" />
-          <span className="eyebrow-text">Available for opportunities</span>
-        </div>
-        <h1 className="hero-title" id="heroTitle">
-          <span className="title-line">
-            <span className="title-word" id="hw1">Hi,&nbsp;</span>
-            <span className="title-word" id="hw2">I&apos;m</span>
-          </span>
-          <span className="title-line">
-            <span className="title-word grad" id="hw3">Muhammad</span>
-          </span>
-          <span className="title-line">
-            <span className="title-word grad" id="hw4">Suleman</span>
-          </span>
+    <section id="hero" ref={ref}>
+      <m.div className="hero-floor" style={{ y: floorY, opacity: floorOpacity }} aria-hidden="true">
+        <m.div
+          className="hero-floor-grid"
+          style={{ rotateX: floorRotate, transformPerspective: 620 }}
+        />
+      </m.div>
+
+      <m.div className="hero-core" style={{ y: coreY, scale: coreScale, opacity: coreOpacity }}>
+        <m.div
+          className="hero-status"
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: START, ease: EASE_OUT }}
+        >
+          <span className="hero-status-dot" />
+          Available for opportunities · {PERSONAL.location}
+        </m.div>
+
+        <h1 className="hero-name">
+          {['MUHAMMAD', 'SULEMAN'].map((word, i) => (
+            <span className="hero-line" key={word}>
+              <m.span
+                className="hero-word"
+                initial={{ y: '108%' }}
+                animate={{ y: 0 }}
+                transition={{ duration: 1, delay: START + 0.1 + i * 0.11, ease: EASE_OUT }}
+              >
+                {word}
+              </m.span>
+            </span>
+          ))}
         </h1>
-        <div className="hero-roles">
-          <span className="role-prefix">I&apos;m a</span>
-          <span className="role-typed" id="roleTyped" />
-        </div>
-        <p className="hero-sub">
-          <strong>Full Stack Developer</strong> building exceptional digital experiences.<br />
-          Specialising in <strong>React</strong>, <strong>Next.js</strong>, <strong>Node.js</strong> &amp; <strong>Golang</strong> —<br />
-          crafting fast, scalable, and beautiful software.
-        </p>
-        <div className="hero-actions">
-          <a href="#projects" className="btn-primary"><span>View My Work</span><span>→</span></a>
-          <a href="#contact" className="btn-secondary">Get In Touch</a>
-        </div>
-        <div className="hero-scroll">
-          <div className="scroll-mouse"><div className="scroll-wheel" /></div>
-          <span>Scroll to explore</span>
-        </div>
-      </div>
-      <div className="hero-badge-float" id="heroBadge">
-        <div className="badge-ring">
-          <svg viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path id="circle-path" d="M80,80 m-65,0 a65,65 0 1,1 130,0 a65,65 0 1,1 -130,0" fill="none"/>
-            <text className="badge-svg-text" fontFamily="JetBrains Mono" fontSize="10" fontWeight="600" letterSpacing="4">
-              <textPath href="#circle-path">FULL STACK DEVELOPER • ISLAMABAD • </textPath>
-            </text>
-          </svg>
-          <div className="badge-center">MS<span>2025</span></div>
-        </div>
-      </div>
+
+        <m.div
+          className="hero-typed"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: START + 0.55 }}
+        >
+          <span className="hero-typed-prefix">$</span>
+          <span className="hero-typed-text">{role}</span>
+        </m.div>
+
+        <m.div
+          className="hero-meta"
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: START + 0.65, ease: EASE_OUT }}
+        >
+          <div className="hero-meta-cell">
+            <span>Currently</span>
+            <b>Software Engineer @ Codbeyon</b>
+          </div>
+          <div className="hero-meta-cell">
+            <span>Building with</span>
+            <b>React · Next.js · Golang</b>
+          </div>
+          <div className="hero-meta-cell">
+            <span>Shipping since</span>
+            <b>2023</b>
+          </div>
+        </m.div>
+
+        <m.div
+          className="hero-cta"
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: START + 0.78, ease: EASE_OUT }}
+        >
+          <m.a href="#work" className="btn-primary" whileHover={{ y: -3 }} whileTap={{ y: 0 }}>
+            <span>See the work</span>
+            <span>→</span>
+          </m.a>
+          <m.a href="#contact" className="btn-secondary" whileHover={{ y: -3 }} whileTap={{ y: 0 }}>
+            Get in touch
+          </m.a>
+        </m.div>
+      </m.div>
+
+      <m.div className="hero-foot" style={{ opacity: coreOpacity }}>
+        <m.div
+          className="hero-foot-inner"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: START + 1 }}
+        >
+          <span className="hero-foot-rule" />
+          <span>Scroll</span>
+        </m.div>
+      </m.div>
     </section>
   );
 }

@@ -1,40 +1,59 @@
 'use client';
+
+import { useScroll, useTransform } from 'motion/react';
+import { useRef } from 'react';
 import { PERSONAL } from '@/data';
+import { EASE_OUT, m } from './motion';
+
+const LINKS = [
+  { label: 'GitHub', href: PERSONAL.github },
+  { label: 'LinkedIn', href: PERSONAL.linkedin },
+  { label: 'Call', href: `tel:${PERSONAL.phone.replace(/[^+\d]/g, '')}` },
+];
 
 export default function Contact() {
+  const ref = useRef<HTMLElement>(null);
+  /* This is the last section, so anything past "centre of the section meets
+     centre of the viewport" is unreachable — the page runs out of scroll and
+     the animation would never complete. */
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'center center'] });
+  const scale = useTransform(scrollYProgress, [0, 1], [0.88, 1]);
+  const opacity = useTransform(scrollYProgress, [0, 0.55], [0, 1]);
+
   return (
-    <section id="contact" style={{ background: 'var(--black2)', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '10rem 5vw' }}>
-      <div className="sec-tag contact-eyebrow reveal-up" style={{ justifyContent: 'center' }}>Get In Touch</div>
+    <section id="contact" ref={ref} className="contact">
+      <m.div className="ct-inner" style={{ scale, opacity }}>
+        <p className="ct-kicker">Available now · Islamabad / remote</p>
 
-      <h2 className="contact-title reveal-up">
-        <span className="contact-title-line">Let&apos;s build</span>
-        <span className="contact-title-line grad-text">something</span>
-        <span className="contact-title-line grad-text">great</span>
-      </h2>
+        <h2 className="ct-title">
+          Let&apos;s build
+          <br />
+          <span className="grad-text">something great.</span>
+        </h2>
 
-      <p className="contact-sub reveal-up">
-        Open to full-time roles, freelance projects, and collaborations.<br />
-        I&apos;d love to hear about what you&apos;re building.
-      </p>
+        <m.a
+          href={`mailto:${PERSONAL.email}`}
+          className="ct-mail"
+          whileHover={{ x: 10 }}
+          transition={{ duration: 0.4, ease: EASE_OUT }}
+        >
+          {PERSONAL.email}
+          <span className="ct-mail-arrow">→</span>
+        </m.a>
 
-      <div className="contact-cards reveal-up">
-        <a href={`mailto:${PERSONAL.email}`} className="ccard">
-          <div className="ccard-icon">✉️</div><span>{PERSONAL.email}</span>
-        </a>
-        <a href={`tel:${PERSONAL.phone.replace(/[^+\d]/g, '')}`} className="ccard">
-          <div className="ccard-icon">📱</div><span>{PERSONAL.phone}</span>
-        </a>
-        <a href={PERSONAL.linkedin} target="_blank" rel="noopener noreferrer" className="ccard">
-          <div className="ccard-icon">💼</div><span>LinkedIn</span>
-        </a>
-        <a href={PERSONAL.github} target="_blank" rel="noopener noreferrer" className="ccard">
-          <div className="ccard-icon">🌐</div><span>GitHub</span>
-        </a>
-      </div>
-
-      <a href={`mailto:${PERSONAL.email}`} className="btn-primary reveal-up">
-        <span>Send a Message</span><span>✉</span>
-      </a>
+        <div className="ct-links">
+          {LINKS.map((l) => (
+            <a
+              key={l.label}
+              href={l.href}
+              target={l.href.startsWith('http') ? '_blank' : undefined}
+              rel={l.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+            >
+              {l.label} <span>↗</span>
+            </a>
+          ))}
+        </div>
+      </m.div>
     </section>
   );
 }
