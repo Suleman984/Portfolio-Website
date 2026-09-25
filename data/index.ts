@@ -1,78 +1,67 @@
-// data/index.ts — Single source of truth for all portfolio data
+// data/index.ts — Single source of truth for all portfolio data.
+// Wording tracks the CVs in /public/cv; keep the two in step.
 
 export interface Project {
   id: number;
   title: string;
   tag: string;
-  img: string | null;
-  emoji: string;
-  imgBg: string;
   desc: string;
   tech: string[];
   highlights: string[];
   liveUrl: string;
   githubUrl: string;
-  /** Featured projects ride the horizontal rail; the rest go in the archive index. */
-  featured?: boolean;
+  /**
+   * selected — full entry on the Projects page, with `cv` bullets.
+   * client   — delivered inside a role; linked from the Experience entry.
+   * archive  — one line in the "Also built" index.
+   */
+  kind: "selected" | "client" | "archive";
+  /** Résumé-length bullets, shown on the page. `highlights` go in the case sheet. */
+  cv?: string[];
 }
 
 export interface Experience {
   role: string;
   company: string;
+  location: string;
   period: string;
-  type: "cur" | "prev" | "intern";
-  icon: string;
   bullets: string[];
-  tags: string[];
-}
-
-export interface Skill {
-  label: string;
-  tip?: string;
+  /** Ids of `client` projects delivered in this role. */
+  projects?: number[];
 }
 
 export const PERSONAL = {
   name: "Muhammad Suleman",
-  role: "Full Stack Developer",
+  role: "Software Engineer",
   email: "sulemanefc@gmail.com",
   phone: "+92-336-058-9167",
   location: "Islamabad, Pakistan",
   linkedin: "https://linkedin.com/in/muhammad-suleman-55bb8020a",
   github: "https://github.com/Suleman984",
-  gpa: "3.1 / 4.0",
-  university: "Institute of Space and Technology",
-  degree: "BS Computer Science",
-  gradYear: "Sep 2020 – Feb 2024",
-  roles: [
-    "Full Stack Developer",
-    "React Specialist",
-    "Next.js Engineer",
-    "Golang Developer",
-    "UI/UX Enthusiast",
-    "Problem Solver",
-  ],
 };
 
-const BG = {
-  violet: "linear-gradient(135deg,#171233,#241a4d)",
-  indigo: "linear-gradient(135deg,#111633,#1b2350)",
-  cyan: "linear-gradient(135deg,#0b1f2b,#123544)",
-  slate: "linear-gradient(135deg,#12141f,#1c2033)",
-  plum: "linear-gradient(135deg,#1f1030,#301a49)",
-  teal: "linear-gradient(135deg,#0c1f22,#123a36)",
-  amber: "linear-gradient(135deg,#251a10,#3a2a17)",
-  rose: "linear-gradient(135deg,#26121f,#3d1d31)",
-};
+/** The summary is split so the highlighter can mark the phrases in `mark`. */
+export const SUMMARY: { text: string; mark?: boolean }[] = [
+  { text: "Frontend-focused Software Engineer building production interfaces in " },
+  { text: "React, Next.js and TypeScript", mark: true },
+  { text: ", with Material UI and clean, component-driven architecture. Works across the stack on " },
+  { text: "Node.js and Go services", mark: true },
+  { text: " backed by PostgreSQL, MySQL and Redis, with a working knowledge of Python and FastAPI. Has integrated " },
+  { text: "third-party APIs and payment gateways", mark: true },
+  { text: " into live products, and owns features end to end, from requirements and schema design through to deployment." },
+];
+
+export const CVS = [
+  { label: "Software Engineer", href: "/cv/muhammad-suleman-software-engineer-cv.pdf" },
+  { label: "Full Stack Developer", href: "/cv/muhammad-suleman-fullstack-developer-cv.pdf" },
+  { label: "Frontend Developer", href: "/cv/muhammad-suleman-frontend-developer-cv.pdf" },
+];
 
 export const PROJECTS: Project[] = [
-  // ── Featured — these ride the horizontal rail ─────────────────────
   {
     id: 1,
     title: "RAAHI — AI Emergency & Family Safety Platform",
     tag: "Mobile · Health-Safety",
-    img: null,
-    emoji: "🚨",
-    imgBg: BG.rose,
     desc: "A Pakistan-first personal emergency system: a React Native app built for elderly and vulnerable users with a one-press SOS, paired with a Next.js dashboard for the family member abroad. An SOS opens a tiered escalation wave across push, SMS and voice calls with per-channel delivery confirmation, and a server-side watchdog escalates rather than failing silently.",
     tech: ["TypeScript", "Expo / React Native", "Next.js", "Supabase", "Deno", "Whisper + Claude", "Turborepo"],
     highlights: [
@@ -85,15 +74,16 @@ export const PROJECTS: Project[] = [
     ],
     liveUrl: "https://raahi-dashboard.vercel.app",
     githubUrl: "https://github.com/Suleman984/RAAHI",
-    featured: true,
+    kind: "selected",
+    cv: [
+      "Turborepo monorepo pairing an Expo app for elderly users with a Next.js dashboard for family abroad, over a shared Supabase Postgres schema, versioned SQL migrations and CI",
+      "Built the alerting pipeline on Supabase Edge Functions: Whisper transcription, Claude triage constrained to a fixed JSON schema, and simultaneous Expo Push with Twilio SMS/voice fallback for low-connectivity areas",
+    ],
   },
   {
     id: 2,
     title: "VulnScope — Security Vulnerability Scanner",
     tag: "Security · DevSecOps",
-    img: null,
-    emoji: "🛡️",
-    imgBg: BG.violet,
     desc: "A multi-engine security scanner that analyses a codebase for insecure code patterns, vulnerable dependencies, leaked secrets and container misconfigurations. It ships as a CLI, a FastAPI REST API and a web dashboard — plus the surrounding SaaS platform: multi-tenant orgs with RBAC, SSO, billing, signed webhooks and a Celery job queue.",
     tech: ["Python", "FastAPI", "SQLAlchemy + Alembic", "Celery + Redis", "PostgreSQL", "Stripe", "Docker"],
     highlights: [
@@ -106,15 +96,17 @@ export const PROJECTS: Project[] = [
     ],
     liveUrl: "#",
     githubUrl: "https://github.com/Suleman984/vulnScope",
-    featured: true,
+    kind: "selected",
+    cv: [
+      "Scanner combining four engines: SAST over insecure code patterns, dependency CVE lookup against the OSV.dev database, entropy-based secret detection, and Docker/Kubernetes misconfiguration checks",
+      "Shipped one codebase as a Typer CLI, a FastAPI service and a web dashboard, with a watch mode that re-scans on file change and alerts only on findings that are new",
+      "Packaged for CI: multi-stage non-root Docker image, a GitHub Actions workflow that fails the build above a severity threshold, and 30+ unit tests under pytest",
+    ],
   },
   {
     id: 3,
     title: "Niche Scout — Product Sourcing & Market Research",
     tag: "Data Pipeline · Next.js",
-    img: null,
-    emoji: "🧭",
-    imgBg: BG.teal,
     desc: "Scrapes Chinese wholesale marketplaces for products in a niche, computes each item's true landed cost into Pakistan (FX, freight per kg, duty, sales tax, clearing amortised over MOQ), then verifies on Daraz that the product actually sells locally and at what price before scoring saturation, demand and margin into a 0–100 opportunity score. Verdicts are deterministic in code — the LLM only normalises titles and writes the explanation afterwards.",
     tech: ["Next.js", "TypeScript", "Supabase", "Cheerio", "Playwright", "Anthropic SDK", "ExcelJS", "Zod"],
     highlights: [
@@ -126,15 +118,16 @@ export const PROJECTS: Project[] = [
     ],
     liveUrl: "#",
     githubUrl: "https://github.com/Suleman984/niche-scout",
-    featured: true,
+    kind: "selected",
+    cv: [
+      "Scrapes wholesale marketplaces with Playwright and computes landed cost across FX, freight, duty, tax and clearing before scoring products against measured local demand and market saturation",
+      "Kept scoring deterministic and testable in TypeScript, using the model only to explain a computed verdict; a background worker runs crawls with bounded concurrency and exports an Excel workbook per run",
+    ],
   },
   {
     id: 4,
     title: "Suppway — Multi-Tenant Commerce & Funnel Engine",
     tag: "Ecommerce SaaS",
-    img: null,
-    emoji: "🏋️",
-    imgBg: BG.indigo,
     desc: "A multi-store ecommerce platform for gym supplements and equipment, with a themeable storefront, role-based admin dashboard, and a funnel engine for upsells, downsells and order bumps. Stores resolve per-request from a URL prefix that middleware rewrites away, with tenant scoping across every table. Catalog, orders, returns, discounts, loyalty and analytics are implemented; card processing is still in progress.",
     tech: ["Next.js", "TypeScript", "Supabase", "Stripe SDK", "Zod", "Tailwind CSS", "Resend"],
     highlights: [
@@ -147,15 +140,16 @@ export const PROJECTS: Project[] = [
     ],
     liveUrl: "#",
     githubUrl: "https://github.com/Suleman984/suppway",
-    featured: true,
+    kind: "selected",
+    cv: [
+      "Funnel engine modelling upsells, downsells and order bumps as a directed graph of steps with accept/decline branching and a JSONB context carrying cart and attribution data",
+      "Multi-tenancy retrofitted across ~20 tables with store resolution in middleware, plus a permission catalog and cloneable custom roles enforced through a single admin gate",
+    ],
   },
   {
     id: 5,
     title: "Rahva Raamat",
     tag: "E-commerce · Codbeyon",
-    img: null,
-    emoji: "📚",
-    imgBg: BG.cyan,
     desc: "Redesigned and optimised the UI/UX of Rahva Raamat, a large-scale Estonian e-commerce book platform. The work focused on accessibility, page performance and component reusability, collaborating with cross-functional teams to ship new features continuously.",
     tech: ["React", "Next.js", "TypeScript", "SCSS", "Tailwind CSS", "REST APIs", "Storybook"],
     highlights: [
@@ -167,15 +161,12 @@ export const PROJECTS: Project[] = [
     ],
     liveUrl: "https://www.rahvaraamat.ee/",
     githubUrl: "",
-    featured: true,
+    kind: "client",
   },
   {
     id: 6,
     title: "Low Hanging Leads",
     tag: "Lead Gen · Codbeyon",
-    img: null,
-    emoji: "🎯",
-    imgBg: BG.slate,
     desc: "A production B2B lead generation platform built at Codbeyon. The system automates prospect discovery, scoring and outreach workflows — cutting hours of manual SDR work down to minutes — and handles large data volumes behind a clean, responsive dashboard.",
     tech: ["React", "Next.js", "TypeScript", "REST APIs", "PostgreSQL", "Supabase", "Node.js"],
     highlights: [
@@ -187,17 +178,14 @@ export const PROJECTS: Project[] = [
     ],
     liveUrl: "#",
     githubUrl: "",
-    featured: true,
+    kind: "client",
   },
   {
     id: 7,
     title: "MatchGate — ATS System",
     tag: "ATS Platform",
-    img: null,
-    emoji: "🔍",
-    imgBg: BG.plum,
     desc: "A fully transparent Applicant Tracking System built to replace opaque, noisy CV-review cycles. A custom rules-based matching engine scores candidates 0–100% on skills, experience and role requirements — no LLM black boxes, complete explainability.",
-    tech: ["Next.js", "Golang", "PostgreSQL", "Supabase", "JWT", "REST APIs", "TypeScript"],
+    tech: ["Next.js", "Golang", "PostgreSQL", "Supabase", "JWT"],
     highlights: [
       "Designed a rules-based matching engine scoring candidates 0–100% with a fully auditable trail",
       "Built the Go + PostgreSQL backend with RESTful APIs and JWT authentication",
@@ -207,15 +195,16 @@ export const PROJECTS: Project[] = [
     ],
     liveUrl: "#",
     githubUrl: "",
-    featured: true,
+    kind: "selected",
+    cv: [
+      "End-to-end transparent ATS: Go + PostgreSQL backend, Next.js frontend, JWT auth, Supabase storage and an embeddable hiring panel served over iframe",
+      "Designed a deterministic rules-based matching engine scoring candidates 0–100% on skills, experience and role fit, explicitly avoiding LLM black-box scoring",
+    ],
   },
   {
     id: 8,
     title: "PSX Bot — AI Stock Analysis System",
     tag: "FinTech · Simulation",
-    img: null,
-    emoji: "📈",
-    imgBg: BG.amber,
     desc: "A monorepo analysis system for the Pakistan Stock Exchange with a FastAPI backend, Next.js dashboard and Expo mobile app. It pulls PSX prices, crawls Pakistani financial news for sentiment, tracks institutional shareholder movements, and feeds all of it into a Claude prompt that returns a BUY/SELL/HOLD decision with reasoning. Trading is simulation-only — there is no broker execution path by design.",
     tech: ["FastAPI", "Python", "Celery + Redis", "Supabase", "Anthropic Claude", "yfinance + pandas", "Next.js", "Expo"],
     highlights: [
@@ -227,17 +216,17 @@ export const PROJECTS: Project[] = [
     ],
     liveUrl: "#",
     githubUrl: "https://github.com/Suleman984/PSX-Bot",
-    featured: true,
+    kind: "selected",
+    cv: [
+      "Monorepo with a FastAPI backend, Next.js dashboard and Expo app that combines PSX prices, news sentiment and shareholder movements into a structured BUY/SELL/HOLD decision",
+      "Self-learning loop re-scores past decisions against realised price movement; simulation-only by design, with every risky capability off by default",
+    ],
   },
 
-  // ── Archive — compact index under the rail ────────────────────────
   {
     id: 9,
     title: "Roast & Rise — Scroll-Driven 3D Site",
     tag: "WebGL · Marketing Site",
-    img: null,
-    emoji: "☕",
-    imgBg: BG.amber,
     desc: "A single-page scroll narrative for a specialty coffee roastery. One fixed canvas renders procedurally generated coffee beans and a custom additive-point steam shader — no model files and no HDRI download. Scroll position is written to a mutable object read by the render loop, so scrolling never triggers a React re-render.",
     tech: ["Next.js", "TypeScript", "three.js", "React Three Fiber", "GSAP ScrollTrigger", "Lenis", "Tailwind CSS"],
     highlights: [
@@ -249,14 +238,12 @@ export const PROJECTS: Project[] = [
     ],
     liveUrl: "#",
     githubUrl: "https://github.com/Suleman984/roast-and-rise",
+    kind: "archive",
   },
   {
     id: 10,
     title: "Occasio — Event Services Marketplace",
     tag: "Marketplace · In Progress",
-    img: null,
-    emoji: "🎪",
-    imgBg: BG.plum,
     desc: "A two-sided marketplace connecting customers with cake makers, decorators and event agencies in Pakistan. One Next.js app serves three role-guarded surfaces via route groups — customer storefront, vendor CMS and admin console — over Supabase, with row-level security as the actual boundary rather than a UI convention.",
     tech: ["TypeScript", "Next.js 16", "React 19", "Supabase", "Tailwind CSS v4", "Turborepo"],
     highlights: [
@@ -268,14 +255,12 @@ export const PROJECTS: Project[] = [
     ],
     liveUrl: "#",
     githubUrl: "https://github.com/Suleman984/occasio",
+    kind: "archive",
   },
   {
     id: 11,
     title: "PriceControl Pakistan",
     tag: "Civic Data Platform",
-    img: null,
-    emoji: "🏷️",
-    imgBg: BG.teal,
     desc: "A crowdsourced price-monitoring system for essential commodities across 20 Pakistani cities. Citizens submit market prices with receipt photos; the app compares them against official reference prices, flags overpricing by severity, and surfaces the gap on a dashboard, a choropleth map and a filterable history table.",
     tech: ["Vanilla JS (ES modules)", "Vite", "Supabase", "Deno Edge Functions", "Chart.js", "Leaflet", "PWA"],
     highlights: [
@@ -287,33 +272,34 @@ export const PROJECTS: Project[] = [
     ],
     liveUrl: "#",
     githubUrl: "https://github.com/ha602/Price-Control-Pakistan",
+    kind: "archive",
   },
   {
     id: 12,
     title: "Diagnostic Center Management System",
-    tag: "Healthcare · Full-Stack",
-    img: null,
-    emoji: "🏥",
-    imgBg: BG.cyan,
-    desc: "A full-stack web application centralising diagnostic centre operations into a single dashboard — POS billing, patient management, test and service catalogue, inventory tracking, and configurable reporting.",
-    tech: ["Next.js", "TypeScript", "Supabase", "PostgreSQL", "REST APIs", "Chart.js"],
+    tag: "Healthcare · Solo · Production",
+    desc: "A live clinical platform in daily production use, built solo over nine months: POS, patient records, inventory, membership, refunds and configurable reporting for a diagnostic centre, on Next.js 16 and Supabase Postgres with access rules enforced in the database rather than the client.",
+    tech: ["Next.js 16", "TypeScript", "Supabase", "PostgreSQL", "Row-Level Security"],
     highlights: [
-      "Unified POS billing handling tests, packages and custom service pricing",
-      "Patient record management with searchable history and result tracking",
-      "Inventory module with low-stock alerts and supplier management",
-      "Analytics dashboards with filterable reports and exportable data",
-      "Persistent state across multi-step workflows and page reloads",
+      "38-table Postgres schema with 25+ database functions and row-level security policies",
+      "Two-layer authorisation: per-user permission grants override role defaults, evaluated through SECURITY DEFINER access functions",
+      "POS with tiered pricing policies and four payment rails",
+      "Refunds with membership-point reversal, and inventory batch and expiry tracking with stock movements",
+      "Audit and report-access logging across the platform",
     ],
     liveUrl: "#",
     githubUrl: "",
+    kind: "selected",
+    cv: [
+      "Sole developer, over 9 months of active development, of a live clinical platform: a 38-table Postgres schema, 25+ database functions and row-level security policies that enforce access in the database rather than the client",
+      "Designed a two-layer authorisation model in which per-user permission grants override role defaults, evaluated through SECURITY DEFINER access functions so the rules hold whichever client calls them",
+      "Built the transactional core — POS with tiered pricing policies and four payment rails, refunds with membership-point reversal, inventory batch and expiry tracking with stock movements, and audit plus report-access logging",
+    ],
   },
   {
     id: 13,
     title: "ZenVolt — Commerce Platform with RBAC Admin",
     tag: "Next.js + Go · In Progress",
-    img: null,
-    emoji: "⚡",
-    imgBg: BG.indigo,
     desc: "An npm-workspaces monorepo splitting a public storefront and an internal admin portal into separate surfaces on shared routing, with hostname-based subdomain redirects in middleware. The substantial work is the internal side: Supabase-backed employee auth, a database-driven permission model, and an invite → provision → suspend employee lifecycle.",
     tech: ["Next.js 16", "TypeScript", "Supabase", "Go + chi", "Tailwind CSS v4", "TanStack Query", "Vitest + Playwright"],
     highlights: [
@@ -325,14 +311,12 @@ export const PROJECTS: Project[] = [
     ],
     liveUrl: "#",
     githubUrl: "https://github.com/Suleman984/zenVolt",
+    kind: "archive",
   },
   {
     id: 14,
     title: "LinkedIn Lead Generator Extension",
     tag: "Chrome Extension",
-    img: null,
-    emoji: "🔌",
-    imgBg: BG.slate,
     desc: "A Chrome extension that reads lead data directly from LinkedIn profiles and search pages, then exports the structured result as a formatted Excel file — eliminating manual copy-paste prospecting.",
     tech: ["JavaScript", "Chrome Extension API (MV3)", "SheetJS", "HTML", "CSS", "DOM Manipulation"],
     highlights: [
@@ -344,14 +328,12 @@ export const PROJECTS: Project[] = [
     ],
     liveUrl: "#",
     githubUrl: "https://github.com/Suleman984/Link2Leads",
+    kind: "archive",
   },
   {
     id: 15,
     title: "Hisaab — Urdu/English Shop Ledger",
     tag: "React Native · State Study",
-    img: null,
-    emoji: "🧾",
-    imgBg: BG.rose,
     desc: "An Expo app for small Pakistani shopkeepers to log daily sales, expenses and customer credit (udhar), with reports and a bilingual Roman-Urdu assistant. State lives entirely in one Zustand store using immer, devtools and AsyncStorage persistence, exposed through fine-grained slice hooks and computed selectors — built as a Context-to-Zustand refactor case study.",
     tech: ["React Native", "Expo", "TypeScript", "Zustand + immer", "AsyncStorage", "React Navigation", "date-fns"],
     highlights: [
@@ -363,14 +345,12 @@ export const PROJECTS: Project[] = [
     ],
     liveUrl: "#",
     githubUrl: "https://github.com/Suleman984/Hisaab",
+    kind: "archive",
   },
   {
     id: 16,
     title: "Optimize E-Commerce Through Social Analytics",
     tag: "Final Year Project",
-    img: null,
-    emoji: "🛒",
-    imgBg: BG.violet,
     desc: "A final year project designed to boost e-commerce sales by harnessing social media analytics, machine learning models and automated web scraping. The system collects product sentiment data from social platforms and translates it into actionable recommendations for store owners.",
     tech: ["React", "Node.js", "MongoDB", "Firebase", "Python", "Machine Learning", "Web Scraping"],
     highlights: [
@@ -382,14 +362,12 @@ export const PROJECTS: Project[] = [
     ],
     liveUrl: "#",
     githubUrl: "",
+    kind: "archive",
   },
   {
     id: 17,
     title: "Data Analysis Using Python",
     tag: "Data Science",
-    img: null,
-    emoji: "📊",
-    imgBg: BG.teal,
     desc: "An end-to-end data analysis project on a retail dataset — from raw data cleaning through exploration, statistical analysis and visualisation — delivering business intelligence insights using Python's core data science stack.",
     tech: ["Python", "Pandas", "Matplotlib", "Seaborn", "Jupyter Notebook", "NumPy"],
     highlights: [
@@ -401,14 +379,12 @@ export const PROJECTS: Project[] = [
     ],
     liveUrl: "#",
     githubUrl: "",
+    kind: "archive",
   },
   {
     id: 18,
     title: "Bus Management System",
     tag: "C++ · Systems",
-    img: null,
-    emoji: "🚌",
-    imgBg: BG.amber,
     desc: "A C++ console-based bus reservation system implementing seat booking, cancellation and admin management workflows, using file-based persistence to maintain reservation data across sessions without a database.",
     tech: ["C++", "File I/O", "OOP", "Data Structures", "Algorithms"],
     highlights: [
@@ -420,173 +396,99 @@ export const PROJECTS: Project[] = [
     ],
     liveUrl: "#",
     githubUrl: "",
+    kind: "archive",
+  },
+  {
+    id: 19,
+    title: "Screenshot Bot — Page Capture & Uptime Monitor",
+    tag: "Node.js · Monitoring",
+    desc: "A Node CLI that drives headless Chromium to capture a rotating list of pages on a configurable interval, flags any page that fails to load inside its timeout, and serves a live dashboard over the capture history.",
+    tech: ["Node.js", "Playwright"],
+    highlights: [
+      "Headless Chromium captures on a configurable interval over a rotating page list",
+      "Per-page load timeout that flags failures instead of hanging the run",
+      "Live dashboard over the full capture history",
+    ],
+    liveUrl: "#",
+    githubUrl: "",
+    kind: "selected",
+    cv: [
+      "Node CLI driving headless Chromium to capture a rotating list of pages on a configurable interval, flagging any page that fails to load inside its timeout, with a live dashboard over the capture history",
+    ],
   },
 ];
 
-export const FEATURED_PROJECTS = PROJECTS.filter((p) => p.featured);
-export const ARCHIVE_PROJECTS = PROJECTS.filter((p) => !p.featured);
+const byOrder = (ids: number[]) => ids.map((id) => PROJECTS.find((p) => p.id === id)!);
+
+/** Résumé order, as on the CV. */
+export const SELECTED_PROJECTS = byOrder([2, 1, 7, 3, 12, 4, 8, 19]);
+export const ARCHIVE_PROJECTS = PROJECTS.filter((p) => p.kind === "archive");
 
 export const EXPERIENCES: Experience[] = [
   {
     role: "Software Engineer",
     company: "Codbeyon",
-    period: "June 2025 – Present",
-    type: "cur",
-    icon: "⚡",
+    location: "Islamabad",
+    period: "Jun 2025 – Present",
     bullets: [
-      "Delivering end-to-end solutions for multiple production-level projects, managing full SDLC from requirements to deployment",
-      "Developed responsive and scalable web applications using React, Next.js, and TypeScript with optimized UI components",
-      "Integrated third-party APIs to improve functionality, performance, and user experience",
-      "Leading Rahva Raamat, Low Hanging Leads, and 3+ more active projects",
+      "Ship production web applications across 5+ client products in React, Next.js, TypeScript and Go, owning work from requirements through deployment",
+      "Sole developer of a Diagnostic Center Management System in daily production use — Next.js 16 and Supabase Postgres — covering POS, patient records, inventory, membership, refunds and configurable reporting",
+      "Integrate third-party APIs into production applications, directly improving functionality and performance",
     ],
-    tags: ["React", "Next.js", "TypeScript", "REST APIs", "Full SDLC"],
+    projects: [12, 5, 6],
   },
   {
     role: "Solution Engineer",
     company: "Phebsoft",
+    location: "Islamabad",
     period: "Nov 2024 – Mar 2025",
-    type: "prev",
-    icon: "🔧",
     bullets: [
-      "Developed and implemented automated integrations to streamline workflows using Versori Automation Tool",
-      "Collaborated with cross-functional teams to optimize system connectivity and performance",
-      "Designed scalable software solutions for diverse client requirements",
-    ],
-    tags: [
-      "Versori",
-      "Workflow Automation",
-      "API Integration",
-      "System Design",
+      "Built and deployed 20+ automated integrations across QuickBooks, Shopify, WooCommerce, Xero, HubSpot and Salesforce using the Versori automation platform",
+      "Designed event-driven workflows connecting disparate systems, strengthening cross-platform API and data-contract knowledge later applied to backend and frontend integration work",
     ],
   },
   {
-    role: "Web Developer Intern",
+    role: "Web Developer",
     company: "Bitsol Technologies",
+    location: "Islamabad",
     period: "Aug 2023 – Sep 2023",
-    type: "intern",
-    icon: "🌐",
     bullets: [
-      "Built scalable front-end applications using React.js, TypeScript, Material UI, and Storybook",
-      "Improved responsive UI design and user experience through clean, component-based architecture",
+      "Built scalable front-end applications using React.js, TypeScript, Material UI and Storybook",
+      "Improved UI responsiveness and user experience through clean, component-based architecture",
     ],
-    tags: ["React.js", "TypeScript", "Material UI", "Storybook", "Kotlin"],
-  },
-];
-
-export const SKILLS: Record<string, Skill[]> = {
-  frontend: [
-    { label: "React.js", tip: "UI library" },
-    { label: "Next.js", tip: "Full-stack framework" },
-    { label: "TypeScript", tip: "Type-safe JS" },
-    { label: "React Native", tip: "Cross-platform mobile" },
-    { label: "Tailwind CSS", tip: "Utility-first CSS" },
-    { label: "Motion", tip: "Animation library" },
-    { label: "Redux Toolkit", tip: "State management" },
-    { label: "Zustand", tip: "Lightweight state" },
-    { label: "SCSS", tip: "CSS preprocessor" },
-    { label: "Material UI", tip: "Component library" },
-    { label: "Storybook", tip: "Component docs" },
-  ],
-  backend: [
-    { label: "Node.js", tip: "Server runtime" },
-    { label: "Golang", tip: "Systems & APIs" },
-    { label: "FastAPI", tip: "Python web framework" },
-    { label: "Celery + Redis", tip: "Background job queues" },
-    { label: "GraphQL", tip: "Query language for APIs" },
-    { label: "REST APIs", tip: "HTTP API design" },
-    { label: "JWT Auth", tip: "Token authentication" },
-    { label: "Versori Automation", tip: "Workflow tool" },
-  ],
-  database: [
-    { label: "PostgreSQL", tip: "Relational DB" },
-    { label: "Supabase", tip: "Postgres + Auth + RLS" },
-    { label: "Row-Level Security", tip: "DB-enforced authorisation" },
-    { label: "Firebase", tip: "Google cloud DB" },
-    { label: "MongoDB", tip: "Document database" },
-  ],
-  languages: [
-    { label: "JavaScript" },
-    { label: "TypeScript" },
-    { label: "Golang" },
-    { label: "C++" },
-    { label: "Python" },
-    { label: "HTML & CSS" },
-  ],
-  tools: [
-    { label: "Git & GitHub" },
-    { label: "Docker" },
-    { label: "Playwright" },
-    { label: "Vercel" },
-    { label: "Postman" },
-    { label: "Jupyter Notebook" },
-  ],
-};
-
-export const SERVICES = [
-  {
-    num: "01",
-    icon: "🎨",
-    title: "Frontend Development",
-    desc: "Pixel-perfect, responsive UIs with React and Next.js. Smooth animations, accessibility-first, and lightning-fast performance.",
-    tags: ["React", "Next.js", "TypeScript", "Motion"],
-  },
-  {
-    num: "02",
-    icon: "⚙️",
-    title: "Backend & APIs",
-    desc: "Scalable server-side systems with Node.js, Golang and FastAPI. RESTful APIs, GraphQL endpoints, JWT auth, and database design that scales.",
-    tags: ["Node.js", "Golang", "FastAPI", "PostgreSQL"],
-  },
-  {
-    num: "03",
-    icon: "🤖",
-    title: "Automation & Data Pipelines",
-    desc: "Scrapers, integration pipelines and job queues that save hours of manual work — with resumable state and honest failure modes.",
-    tags: ["Celery", "Playwright", "Cheerio", "Webhooks"],
-  },
-  {
-    num: "04",
-    icon: "📱",
-    title: "Full-Stack Products",
-    desc: "End-to-end product delivery from requirements to deployment. I own the full SDLC and deliver production-ready software.",
-    tags: ["Full SDLC", "Supabase", "Deployment", "Firebase"],
-  },
-  {
-    num: "05",
-    icon: "🛡️",
-    title: "Auth, RBAC & Multi-Tenancy",
-    desc: "Role-based access control, row-level security and tenant isolation enforced at the database, not just in the UI.",
-    tags: ["RLS", "RBAC", "SSO", "JWT"],
-  },
-  {
-    num: "06",
-    icon: "🚀",
-    title: "Performance & Optimization",
-    desc: "Code audits, bundle optimization, and UI/UX improvements. Making existing apps faster, more accessible, and maintainable.",
-    tags: ["Web Vitals", "Refactoring", "Accessibility", "SEO"],
   },
 ];
 
 export const STATS = [
-  { icon: "💼", target: 2, suffix: "+", label: "Years Experience" },
-  { icon: "🚀", target: PROJECTS.length, suffix: "", label: "Projects Built" },
-  { icon: "🏢", target: 3, suffix: "", label: "Companies Worked" },
+  { value: 2, suffix: "+", label: "years shipping in production" },
+  { value: 5, suffix: "+", label: "client products at Codbeyon" },
+  { value: 20, suffix: "+", label: "integrations deployed" },
+  { value: PROJECTS.length, suffix: "", label: "projects built" },
 ];
 
+export const SKILLS: { label: string; items: string[] }[] = [
+  { label: "Languages", items: ["TypeScript", "JavaScript", "Golang", "SQL", "HTML5", "CSS3", "Python (basic)"] },
+  { label: "Backend & APIs", items: ["Node.js", "Golang", "Express", "REST", "GraphQL", "JWT authentication", "Event-driven workflows", "Background workers", "FastAPI (basic)"] },
+  { label: "Databases", items: ["PostgreSQL", "MySQL", "Redis", "Supabase (Edge Functions & RLS)", "SQLAlchemy/Alembic", "Firebase", "MongoDB"] },
+  { label: "Frontend", items: ["React", "Next.js (App Router, Server Actions)", "React Native", "Expo", "Capacitor", "PWA (Serwist)"] },
+  { label: "State", items: ["Redux Toolkit", "Zustand", "React Context API"] },
+  { label: "Testing & Quality", items: ["Jest", "React Testing Library", "Playwright", "pytest", "ESLint", "TypeScript strict mode"] },
+  { label: "DevOps & Tooling", items: ["Docker (multi-stage, non-root)", "GitHub Actions CI", "Turborepo", "pnpm workspaces", "Vercel", "Git", "Postman"] },
+  { label: "Auth & Security", items: ["NextAuth", "JWT", "scrypt/bcrypt", "Zod validation", "Role-based access control", "SAST/SCA scanning"] },
+  { label: "Payments & Integrations", items: ["Stripe", "JazzCash/EasyPaisa", "Versori", "n8n", "Webhooks", "QuickBooks", "Shopify", "WooCommerce", "Xero", "HubSpot", "Salesforce"] },
+  { label: "Styling & UI", items: ["Tailwind CSS", "SCSS/SASS", "Material UI", "Framer Motion", "GSAP", "three.js", "Storybook"] },
+  { label: "AI-Assisted Dev", items: ["Cursor", "Claude (tool use & MCP)", "MCP servers", "Custom agent skills"] },
+];
+
+export const EDUCATION = {
+  degree: "BS Computer Science",
+  school: "Institute of Space & Technology, Islamabad",
+  period: "Sep 2020 – Feb 2024",
+  gpa: "3.1 / 4.0",
+};
+
 export const ACHIEVEMENTS = [
-  {
-    icon: "🥇",
-    title: "1st Place — Speed Programming",
-    desc: "Won the Speed Programming Competition at the Institute of Space and Technology in 2023, competing against the best coders in the university.",
-  },
-  {
-    icon: "🥈",
-    title: "2nd Place — University Quiz",
-    desc: "Secured second place in the University Quiz Competition 2023, demonstrating depth of technical and academic knowledge.",
-  },
-  {
-    icon: "📜",
-    title: "MERN Stack Certification",
-    desc: "Earned Introduction to MERN Stack certification from SimpliLearn, validating expertise in MongoDB, Express, React, and Node.js.",
-  },
+  { title: "1st Place — Speed Programming Competition", where: "IST", year: "2022" },
+  { title: "2nd Place — University Quiz Competition", where: "IST", year: "2022" },
+  { title: "Certified — MERN Stack", where: "SimpliLearn", year: "" },
 ];
