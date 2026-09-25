@@ -22,9 +22,6 @@ const handle = (url: string) => url.replace(/^https?:\/\/(www\.)?/, '');
 export function ResumeHeader() {
   return (
     <header id="top" className="cv-head">
-      <p className="cv-kicker mono" data-intro="line">
-        Curriculum Vitae <span className="muted">· portfolio edition</span>
-      </p>
       <h1 className="cv-name" data-intro="name">
         {PERSONAL.name}
       </h1>
